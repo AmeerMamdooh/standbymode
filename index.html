@@ -795,13 +795,10 @@
                         console.log('Using cached weather data, last updated:', lastUpdate.toLocaleTimeString());
                         // Use cached data
                         const data = JSON.parse(cachedData);
-                        updateWeatherUI(data, lastUpdate);
+                        updateWeatherUI(data);
                         return;
                     }
                 }
-                
-                // Update the last updated time
-                document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleTimeString()}`;
                 
                 // Fetch API data
                 const response = await fetch('https://weather-api167.p.rapidapi.com/api/weather/current?place=Baghdad%2CIQ&units=metric&lang=en&mode=json', {
@@ -820,12 +817,18 @@
                 const data = await response.json();
                 console.log('Weather data fetched from API:', data);
                 
-                // Cache the data and update timestamp
+                // Cache the data
                 localStorage.setItem('weatherData', JSON.stringify(data));
-                localStorage.setItem('weatherLastUpdate', now.getTime().toString());
+                
+                // Store the server timestamp if available, otherwise use client time
+                if (data.dt) {
+                    localStorage.setItem('weatherLastUpdate', (data.dt * 1000).toString());
+                } else {
+                    localStorage.setItem('weatherLastUpdate', now.getTime().toString());
+                }
                 
                 // Update UI with weather data
-                updateWeatherUI(data, now);
+                updateWeatherUI(data);
                 
             } catch (error) {
                 console.error('Error fetching weather data:', error);
@@ -834,7 +837,7 @@
         }
 
         // Separated UI update function to reuse with cached data
-        function updateWeatherUI(data, updateTime) {
+        function updateWeatherUI(data) {
             document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
             document.getElementById('temperature').textContent = `${Math.round(data.main.temprature)}°${data.main.temprature_unit}`;
             document.getElementById('weather-description').textContent = data.weather[0].description;
@@ -846,8 +849,21 @@
             // Create weather icon based on weather condition code
             createWeatherIcon(data.weather[0].id);
             
-            // Update last updated time display
-            document.getElementById('last-updated').textContent = `Last updated: ${updateTime.toLocaleTimeString()}`;
+            // Use server timestamp for "last updated" if available
+            if (data.dt) {
+                const serverUpdateTime = new Date(data.dt * 1000);
+                document.getElementById('last-updated').textContent = `Last updated: ${serverUpdateTime.toLocaleTimeString()}`;
+            } else {
+                // Check if we have stored a server timestamp
+                const lastUpdateTime = localStorage.getItem('weatherLastUpdate');
+                if (lastUpdateTime) {
+                    const updateTime = new Date(parseInt(lastUpdateTime));
+                    document.getElementById('last-updated').textContent = `Last updated: ${updateTime.toLocaleTimeString()}`;
+                } else {
+                    // Fallback to showing current time (should rarely happen)
+                    document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+                }
+            }
         }
 
         // Initialize the app
@@ -860,7 +876,7 @@
             // Schedule regular updates
             setInterval(() => {
                 fetchWeatherData();
-            }, 900000); // Check every hour
+            }, 900000); // Check every 15 minutes (900000 ms)
         };
     </script>
 </body>
