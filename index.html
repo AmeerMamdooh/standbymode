@@ -211,13 +211,13 @@
         /* Weather animations */
         .sun {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: #ffcf40;
             border-radius: 50%;
             box-shadow: 0 0 20px #ffcf40;
-            top: 25px;
-            left: 25px;
+            top: 20px;
+            left: 20px;
         }
         
         .sun-ray {
@@ -225,7 +225,7 @@
             top: 50%;
             left: 50%;
             width: 3px;
-            height: 15px;
+            height: 20px;
             background: #ffcf40;
             border-radius: 5px;
             transform-origin: center bottom;
@@ -239,18 +239,18 @@
         }
         
         .cloud.small {
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
         }
         
         .cloud.medium {
-            width: 35px;
-            height: 35px;
+            width: 45px;
+            height: 45px;
         }
         
         .cloud.large {
-            width: 45px;
-            height: 45px;
+            width: 60px;
+            height: 60px;
         }
         
         @keyframes float {
@@ -258,22 +258,22 @@
                 transform: translateY(0);
             }
             50% {
-                transform: translateY(-5px);
+                transform: translateY(-10px);
             }
         }
         
         .rain {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            top: 25px;
-            left: 20px;
+            width: 80px;
+            height: 80px;
+            top: 10px;
+            left: 10px;
         }
         
         .raindrop {
             position: absolute;
             width: 2px;
-            height: 8px;
+            height: 10px;
             background: #a4d8f9;
             border-radius: 5px;
             animation: rain 1.5s infinite linear;
@@ -285,23 +285,23 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(20px) scaleY(0.5);
+                transform: translateY(40px) scaleY(0.5);
                 opacity: 0;
             }
         }
         
         .snow {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            top: 20px;
-            left: 20px;
+            width: 80px;
+            height: 80px;
+            top: 10px;
+            left: 10px;
         }
         
         .snowflake {
             position: absolute;
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             background: white;
             border-radius: 50%;
             animation: snow 3s infinite linear;
@@ -313,7 +313,7 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(20px) rotate(360deg);
+                transform: translateY(40px) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -355,67 +355,6 @@
             width: 40px;
             height: 40px;
             position: relative;
-        }
-        
-        .mini-sun {
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            background: #ffcf40;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #ffcf40;
-            top: 8px;
-            left: 8px;
-        }
-        
-        .mini-cloud {
-            position: absolute;
-            background: #f2f9fe;
-            border-radius: 50%;
-            animation: float 4s infinite ease-in-out;
-        }
-        
-        .mini-cloud.small {
-            width: 15px;
-            height: 15px;
-        }
-        
-        .mini-cloud.medium {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .mini-cloud.large {
-            width: 25px;
-            height: 25px;
-        }
-        
-        .mini-rain {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            top: 10px;
-            left: 5px;
-        }
-        
-        .mini-raindrop {
-            position: absolute;
-            width: 1px;
-            height: 5px;
-            background: #a4d8f9;
-            border-radius: 5px;
-            animation: mini-rain 1.5s infinite linear;
-        }
-        
-        @keyframes mini-rain {
-            0% {
-                transform: translateY(0) scaleY(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(15px) scaleY(0.5);
-                opacity: 0;
-            }
         }
         
         /* Media queries for tablet landscape */
@@ -597,147 +536,116 @@
         // Create weather icons
         function createWeatherIcons() {
             // Create sunny icon
-            const sunnyIcon = (isSmall = false) => {
+            const sunnyIcon = () => {
                 const icon = document.createElement('div');
                 const sun = document.createElement('div');
+                sun.className = 'sun';
+                icon.appendChild(sun);
                 
-                if (isSmall) {
-                    sun.className = 'mini-sun';
-                    // Create sun rays for mini icon
-                    for (let i = 0; i < 8; i++) {
-                        const ray = document.createElement('div');
-                        ray.className = 'sun-ray';
-                        ray.style.width = '2px';
-                        ray.style.height = '8px';
-                        ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
-                        sun.appendChild(ray);
-                    }
-                } else {
-                    sun.className = 'sun';
-                    // Create sun rays
-                    for (let i = 0; i < 8; i++) {
-                        const ray = document.createElement('div');
-                        ray.className = 'sun-ray';
-                        ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
-                        sun.appendChild(ray);
-                    }
+                // Create sun rays
+                for (let i = 0; i < 8; i++) {
+                    const ray = document.createElement('div');
+                    ray.className = 'sun-ray';
+                    ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
+                    sun.appendChild(ray);
                 }
                 
-                icon.appendChild(sun);
                 return icon;
             };
             
             // Create partly cloudy icon
-            const partlyCloudyIcon = (isSmall = false) => {
+            const partlyCloudyIcon = () => {
                 const icon = document.createElement('div');
                 const sun = document.createElement('div');
-                
-                if (isSmall) {
-                    sun.className = 'mini-sun';
-                    sun.style.width = '20px';
-                    sun.style.height = '20px';
-                    sun.style.left = '0px';
-                    sun.style.top = '0px';
-                    
-                    // Add clouds over the sun for mini icon
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'mini-cloud medium';
-                    cloud1.style.left = '15px';
-                    cloud1.style.top = '15px';
-                    cloud1.style.opacity = '0.9';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'mini-cloud large';
-                    cloud2.style.left = '8px';
-                    cloud2.style.top = '20px';
-                    icon.appendChild(cloud2);
-                } else {
-                    sun.className = 'sun';
-                    sun.style.left = '15px';
-                    sun.style.top = '10px';
-                    
-                    // Add clouds over the sun
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'cloud medium';
-                    cloud1.style.left = '55px';
-                    cloud1.style.top = '30px';
-                    cloud1.style.opacity = '0.9';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'cloud large';
-                    cloud2.style.left = '35px';
-                    cloud2.style.top = '50px';
-                    icon.appendChild(cloud2);
-                }
-                
+                sun.className = 'sun';
+                sun.style.width = '50px';
+                sun.style.height = '50px';
+                sun.style.left = '5px';
+                sun.style.top = '10px';
                 icon.appendChild(sun);
+                
+                // Add clouds over the sun
+                const cloud1 = document.createElement('div');
+                cloud1.className = 'cloud medium';
+                cloud1.style.left = '40px';
+                cloud1.style.top = '40px';
+                cloud1.style.opacity = '0.9';
+                icon.appendChild(cloud1);
+                
+                const cloud2 = document.createElement('div');
+                cloud2.className = 'cloud large';
+                cloud2.style.left = '20px';
+                cloud2.style.top = '50px';
+                icon.appendChild(cloud2);
+                
                 return icon;
             };
             
             // Create rainy icon
-            const rainyIcon = (isSmall = false) => {
+            const rainyIcon = () => {
                 const icon = document.createElement('div');
                 
-                if (isSmall) {
-                    // Create cloud base for mini icon
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'mini-cloud large';
-                    cloud1.style.left = '8px';
-                    cloud1.style.top = '0px';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'mini-cloud medium';
-                    cloud2.style.left = '15px';
-                    cloud2.style.top = '-3px';
-                    icon.appendChild(cloud2);
-                    
-                    // Create rain container for mini icon
-                    const rain = document.createElement('div');
-                    rain.className = 'mini-rain';
-                    
-                    // Add raindrops
-                    for (let i = 0; i < 8; i++) {
-                        const drop = document.createElement('div');
-                        drop.className = 'mini-raindrop';
-                        drop.style.left = `${Math.random() * 30}px`;
-                        drop.style.animationDelay = `${Math.random() * 1.5}s`;
-                        rain.appendChild(drop);
-                    }
-                    
-                    icon.appendChild(rain);
-                } else {
-                    // Create cloud base
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'cloud large';
-                    cloud1.style.left = '25px';
-                    cloud1.style.top = '15px';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'cloud medium';
-                    cloud2.style.left = '45px';
-                    cloud2.style.top = '10px';
-                    icon.appendChild(cloud2);
-                    
-                    // Create rain container
-                    const rain = document.createElement('div');
-                    rain.className = 'rain';
-                    
-                    // Add raindrops
-                    for (let i = 0; i < 12; i++) {
-                        const drop = document.createElement('div');
-                        drop.className = 'raindrop';
-                        drop.style.left = `${Math.random() * 60}px`;
-                        drop.style.animationDelay = `${Math.random() * 1.5}s`;
-                        rain.appendChild(drop);
-                    }
-                    
-                    icon.appendChild(rain);
+                // Create cloud base
+                const cloud1 = document.createElement('div');
+                cloud1.className = 'cloud large';
+                cloud1.style.left = '20px';
+                cloud1.style.top = '10px';
+                icon.appendChild(cloud1);
+                
+                const cloud2 = document.createElement('div');
+                cloud2.className = 'cloud medium';
+                cloud2.style.left = '45px';
+                cloud2.style.top = '5px';
+                icon.appendChild(cloud2);
+                
+                // Create rain container
+                const rain = document.createElement('div');
+                rain.className = 'rain';
+                
+                // Add raindrops
+                for (let i = 0; i < 15; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'raindrop';
+                    drop.style.left = `${Math.random() * 80}px`;
+                    drop.style.animationDelay = `${Math.random() * 1.5}s`;
+                    rain.appendChild(drop);
                 }
                 
+                icon.appendChild(rain);
+                return icon;
+            };
+            
+            // Create snowy icon
+            const snowyIcon = () => {
+                const icon = document.createElement('div');
+                
+                // Create cloud base
+                const cloud1 = document.createElement('div');
+                cloud1.className = 'cloud large';
+                cloud1.style.left = '20px';
+                cloud1.style.top = '10px';
+                icon.appendChild(cloud1);
+                
+                const cloud2 = document.createElement('div');
+                cloud2.className = 'cloud medium';
+                cloud2.style.left = '45px';
+                cloud2.style.top = '5px';
+                icon.appendChild(cloud2);
+                
+                // Create snow container
+                const snow = document.createElement('div');
+                snow.className = 'snow';
+                
+                // Add snowflakes
+                for (let i = 0; i < 15; i++) {
+                    const flake = document.createElement('div');
+                    flake.className = 'snowflake';
+                    flake.style.left = `${Math.random() * 80}px`;
+                    flake.style.animationDelay = `${Math.random() * 3}s`;
+                    snow.appendChild(flake);
+                }
+                
+                icon.appendChild(snow);
                 return icon;
             };
             
@@ -746,10 +654,10 @@
             mainWeatherIcon.appendChild(partlyCloudyIcon());
             
             // Set forecast icons
-            document.getElementById('forecast-icon-1').appendChild(sunnyIcon(true));
-            document.getElementById('forecast-icon-2').appendChild(sunnyIcon(true));
-            document.getElementById('forecast-icon-3').appendChild(rainyIcon(true));
-            document.getElementById('forecast-icon-4').appendChild(partlyCloudyIcon(true));
+            document.getElementById('forecast-icon-1').appendChild(sunnyIcon());
+            document.getElementById('forecast-icon-2').appendChild(sunnyIcon());
+            document.getElementById('forecast-icon-3').appendChild(rainyIcon());
+            document.getElementById('forecast-icon-4').appendChild(partlyCloudyIcon());
         }
         
         // Initialize the app
