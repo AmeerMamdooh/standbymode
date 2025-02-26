@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standby Mode</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            width: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 45%;
+            height: 100%;
+        }
+        
+        .right-panel {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+        
+        .clock {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .clock-face {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 50% 0;
+            border-radius: 10px;
+        }
+        
+        .hour-hand {
+            width: 6px;
+            height: 80px;
+            background: #fff;
+            transform: translate(-50%, 0) rotate(0deg);
+        }
+        
+        .minute-hand {
+            width: 4px;
+            height: 110px;
+            background: #fff;
+            transform: translate(-50%, 0) rotate(0deg);
+        }
+        
+        .second-hand {
+            width: 2px;
+            height: 120px;
+            background: #ff5e5e;
+            transform: translate(-50%, 0) rotate(0deg);
+        }
+        
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5e5e;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        
+        .hour-marks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .hour-mark {
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background: #fff;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            transform-origin: center 144px;
+        }
+        
+        .minute-mark {
+            position: absolute;
+            width: 2px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            transform-origin: center 140px;
+        }
+        
+        .date-time {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        
+        .weather-container {
+            display: flex;
+            flex-direction: column;
+            height: 80%;
+            width: 100%;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-sizing: border-box;
+        }
+        
+        .location {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 300;
+        }
+        
+        .weather-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin: 1.5rem 0;
+        }
+        
+        .temperature {
+            font-size: 4rem;
+            font-weight: 200;
+        }
+        
+        .weather-icon {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+        
+        .weather-details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-value {
+            font-size: 1.4rem;
+            font-weight: 300;
+        }
+        
+        /* Weather animations */
+        .sun {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #ffcf40;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffcf40;
+            top: 25px;
+            left: 25px;
+        }
+        
+        .sun-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 3px;
+            height: 15px;
+            background: #ffcf40;
+            border-radius: 5px;
+            transform-origin: center bottom;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: #f2f9fe;
+            border-radius: 50%;
+            animation: float 4s infinite ease-in-out;
+        }
+        
+        .cloud.small {
+            width: 25px;
+            height: 25px;
+        }
+        
+        .cloud.medium {
+            width: 35px;
+            height: 35px;
+        }
+        
+        .cloud.large {
+            width: 45px;
+            height: 45px;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .rain {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            top: 25px;
+            left: 20px;
+        }
+        
+        .raindrop {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: #a4d8f9;
+            border-radius: 5px;
+            animation: rain 1.5s infinite linear;
+        }
+        
+        @keyframes rain {
+            0% {
+                transform: translateY(0) scaleY(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(20px) scaleY(0.5);
+                opacity: 0;
+            }
+        }
+        
+        .snow {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            top: 20px;
+            left: 20px;
+        }
+        
+        .snowflake {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            animation: snow 3s infinite linear;
+        }
+        
+        @keyframes snow {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .forecast {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: auto;
+        }
+        
+        .forecast-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.8rem;
+            flex: 1;
+            border-radius: 12px;
+            transition: background-color 0.3s;
+        }
+        
+        .forecast-day:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .forecast-date {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.8rem;
+        }
+        
+        .forecast-temp {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-top: 0.8rem;
+        }
+        
+        .mini-icon {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+        
+        .mini-sun {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #ffcf40;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffcf40;
+            top: 8px;
+            left: 8px;
+        }
+        
+        .mini-cloud {
+            position: absolute;
+            background: #f2f9fe;
+            border-radius: 50%;
+            animation: float 4s infinite ease-in-out;
+        }
+        
+        .mini-cloud.small {
+            width: 15px;
+            height: 15px;
+        }
+        
+        .mini-cloud.medium {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .mini-cloud.large {
+            width: 25px;
+            height: 25px;
+        }
+        
+        .mini-rain {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 10px;
+            left: 5px;
+        }
+        
+        .mini-raindrop {
+            position: absolute;
+            width: 1px;
+            height: 5px;
+            background: #a4d8f9;
+            border-radius: 5px;
+            animation: mini-rain 1.5s infinite linear;
+        }
+        
+        @keyframes mini-rain {
+            0% {
+                transform: translateY(0) scaleY(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(15px) scaleY(0.5);
+                opacity: 0;
+            }
+        }
+        
+        /* Media queries for tablet landscape */
+        @media (max-width: 1024px) {
+            .clock-container {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .hour-mark {
+                transform-origin: center 114px;
+            }
+            
+            .minute-mark {
+                transform-origin: center 110px;
+            }
+            
+            .hour-hand {
+                height: 70px;
+            }
+            
+            .minute-hand {
+                height: 90px;
+            }
+            
+            .second-hand {
+                height: 100px;
+            }
+            
+            .temperature {
+                font-size: 3.5rem;
+            }
+            
+            .forecast-day {
+                padding: 0.5rem;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .clock-container {
+                margin-bottom: 1rem;
+            }
+            
+            .forecast {
+                margin-top: 1rem;
+            }
+            
+            .weather-details {
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="clock-container">
+                <div class="clock">
+                    <div class="hour-marks" id="hour-marks"></div>
+                    <div class="clock-face">
+                        <div class="hand hour-hand" id="hour-hand"></div>
+                        <div class="hand minute-hand" id="minute-hand"></div>
+                        <div class="hand second-hand" id="second-hand"></div>
+                        <div class="center-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="date-time" id="date-time"></div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="weather-container">
+                <div class="location">San Francisco, CA</div>
+                
+                <div class="weather-display">
+                    <div class="temperature">68°F</div>
+                    <div class="weather-icon" id="weather-icon">
+                        <!-- Dynamic weather icon will be placed here -->
+                    </div>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="detail">
+                        <span class="detail-label">HUMIDITY</span>
+                        <span class="detail-value">72%</span>
+                    </div>
+                    <div class="detail">
+                        <span class="detail-label">WIND</span>
+                        <span class="detail-value">8 mph</span>
+                    </div>
+                    <div class="detail">
+                        <span class="detail-label">FEELS LIKE</span>
+                        <span class="detail-value">70°F</span>
+                    </div>
+                    <div class="detail">
+                        <span class="detail-label">UV INDEX</span>
+                        <span class="detail-value">5</span>
+                    </div>
+                </div>
+                
+                <div class="forecast">
+                    <div class="forecast-day">
+                        <span class="forecast-date">THU</span>
+                        <div class="mini-icon" id="forecast-icon-1"></div>
+                        <span class="forecast-temp">72°F</span>
+                    </div>
+                    <div class="forecast-day">
+                        <span class="forecast-date">FRI</span>
+                        <div class="mini-icon" id="forecast-icon-2"></div>
+                        <span class="forecast-temp">75°F</span>
+                    </div>
+                    <div class="forecast-day">
+                        <span class="forecast-date">SAT</span>
+                        <div class="mini-icon" id="forecast-icon-3"></div>
+                        <span class="forecast-temp">69°F</span>
+                    </div>
+                    <div class="forecast-day">
+                        <span class="forecast-date">SUN</span>
+                        <div class="mini-icon" id="forecast-icon-4"></div>
+                        <span class="forecast-temp">65°F</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create clock hour marks
+        const hourMarksContainer = document.getElementById('hour-marks');
+        for (let i = 0; i < 12; i++) {
+            const hourMark = document.createElement('div');
+            hourMark.className = 'hour-mark';
+            hourMark.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+            hourMarksContainer.appendChild(hourMark);
+            
+            // Add minute marks between hours
+            for (let j = 1; j < 5; j++) {
+                const minuteMark = document.createElement('div');
+                minuteMark.className = 'minute-mark';
+                minuteMark.style.transform = `translateX(-50%) rotate(${i * 30 + j * 6}deg)`;
+                hourMarksContainer.appendChild(minuteMark);
+            }
+        }
+        
+        // Update clock
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const milliseconds = now.getMilliseconds();
+            
+            // Calculate angles
+            const hourAngle = (hours % 12) * 30 + minutes * 0.5;
+            const minuteAngle = minutes * 6 + seconds * 0.1;
+            const secondAngle = seconds * 6 + milliseconds * 0.006;
+            
+            // Apply rotations
+            document.getElementById('hour-hand').style.transform = `translate(-50%, 0) rotate(${hourAngle}deg)`;
+            document.getElementById('minute-hand').style.transform = `translate(-50%, 0) rotate(${minuteAngle}deg)`;
+            document.getElementById('second-hand').style.transform = `translate(-50%, 0) rotate(${secondAngle}deg)`;
+            
+            // Update date-time text
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options);
+            const timeString = hours.toString().padStart(2, '0') + ':' + 
+                minutes.toString().padStart(2, '0');
+            document.getElementById('date-time').textContent = `${dateString} • ${timeString}`;
+            
+            requestAnimationFrame(updateClock);
+        }
+        
+        // Create weather icons
+        function createWeatherIcons() {
+            // Create sunny icon
+            const sunnyIcon = (isSmall = false) => {
+                const icon = document.createElement('div');
+                const sun = document.createElement('div');
+                
+                if (isSmall) {
+                    sun.className = 'mini-sun';
+                    // Create sun rays for mini icon
+                    for (let i = 0; i < 8; i++) {
+                        const ray = document.createElement('div');
+                        ray.className = 'sun-ray';
+                        ray.style.width = '2px';
+                        ray.style.height = '8px';
+                        ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
+                        sun.appendChild(ray);
+                    }
+                } else {
+                    sun.className = 'sun';
+                    // Create sun rays
+                    for (let i = 0; i < 8; i++) {
+                        const ray = document.createElement('div');
+                        ray.className = 'sun-ray';
+                        ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
+                        sun.appendChild(ray);
+                    }
+                }
+                
+                icon.appendChild(sun);
+                return icon;
+            };
+            
+            // Create partly cloudy icon
+            const partlyCloudyIcon = (isSmall = false) => {
+                const icon = document.createElement('div');
+                const sun = document.createElement('div');
+                
+                if (isSmall) {
+                    sun.className = 'mini-sun';
+                    sun.style.width = '20px';
+                    sun.style.height = '20px';
+                    sun.style.left = '0px';
+                    sun.style.top = '0px';
+                    
+                    // Add clouds over the sun for mini icon
+                    const cloud1 = document.createElement('div');
+                    cloud1.className = 'mini-cloud medium';
+                    cloud1.style.left = '15px';
+                    cloud1.style.top = '15px';
+                    cloud1.style.opacity = '0.9';
+                    icon.appendChild(cloud1);
+                    
+                    const cloud2 = document.createElement('div');
+                    cloud2.className = 'mini-cloud large';
+                    cloud2.style.left = '8px';
+                    cloud2.style.top = '20px';
+                    icon.appendChild(cloud2);
+                } else {
+                    sun.className = 'sun';
+                    sun.style.left = '15px';
+                    sun.style.top = '10px';
+                    
+                    // Add clouds over the sun
+                    const cloud1 = document.createElement('div');
+                    cloud1.className = 'cloud medium';
+                    cloud1.style.left = '55px';
+                    cloud1.style.top = '30px';
+                    cloud1.style.opacity = '0.9';
+                    icon.appendChild(cloud1);
+                    
+                    const cloud2 = document.createElement('div');
+                    cloud2.className = 'cloud large';
+                    cloud2.style.left = '35px';
+                    cloud2.style.top = '50px';
+                    icon.appendChild(cloud2);
+                }
+                
+                icon.appendChild(sun);
+                return icon;
+            };
+            
+            // Create rainy icon
+            const rainyIcon = (isSmall = false) => {
+                const icon = document.createElement('div');
+                
+                if (isSmall) {
+                    // Create cloud base for mini icon
+                    const cloud1 = document.createElement('div');
+                    cloud1.className = 'mini-cloud large';
+                    cloud1.style.left = '8px';
+                    cloud1.style.top = '0px';
+                    icon.appendChild(cloud1);
+                    
+                    const cloud2 = document.createElement('div');
+                    cloud2.className = 'mini-cloud medium';
+                    cloud2.style.left = '15px';
+                    cloud2.style.top = '-3px';
+                    icon.appendChild(cloud2);
+                    
+                    // Create rain container for mini icon
+                    const rain = document.createElement('div');
+                    rain.className = 'mini-rain';
+                    
+                    // Add raindrops
+                    for (let i = 0; i < 8; i++) {
+                        const drop = document.createElement('div');
+                        drop.className = 'mini-raindrop';
+                        drop.style.left = `${Math.random() * 30}px`;
+                        drop.style.animationDelay = `${Math.random() * 1.5}s`;
+                        rain.appendChild(drop);
+                    }
+                    
+                    icon.appendChild(rain);
+                } else {
+                    // Create cloud base
+                    const cloud1 = document.createElement('div');
+                    cloud1.className = 'cloud large';
+                    cloud1.style.left = '25px';
+                    cloud1.style.top = '15px';
+                    icon.appendChild(cloud1);
+                    
+                    const cloud2 = document.createElement('div');
+                    cloud2.className = 'cloud medium';
+                    cloud2.style.left = '45px';
+                    cloud2.style.top = '10px';
+                    icon.appendChild(cloud2);
+                    
+                    // Create rain container
+                    const rain = document.createElement('div');
+                    rain.className = 'rain';
+                    
+                    // Add raindrops
+                    for (let i = 0; i < 12; i++) {
+                        const drop = document.createElement('div');
+                        drop.className = 'raindrop';
+                        drop.style.left = `${Math.random() * 60}px`;
+                        drop.style.animationDelay = `${Math.random() * 1.5}s`;
+                        rain.appendChild(drop);
+                    }
+                    
+                    icon.appendChild(rain);
+                }
+                
+                return icon;
+            };
+            
+            // Set main weather icon
+            const mainWeatherIcon = document.getElementById('weather-icon');
+            mainWeatherIcon.appendChild(partlyCloudyIcon());
+            
+            // Set forecast icons
+            document.getElementById('forecast-icon-1').appendChild(sunnyIcon(true));
+            document.getElementById('forecast-icon-2').appendChild(sunnyIcon(true));
+            document.getElementById('forecast-icon-3').appendChild(rainyIcon(true));
+            document.getElementById('forecast-icon-4').appendChild(partlyCloudyIcon(true));
+        }
+        
+        // Initialize the app
+        window.onload = function() {
+            updateClock();
+            createWeatherIcons();
+        };
+    </script>
+</body>
+</html>
