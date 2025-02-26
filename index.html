@@ -187,7 +187,7 @@
             justify-content: space-between;
             width: 100%;
             margin-top: 1.5rem;
-            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         
         .detail {
@@ -195,6 +195,8 @@
             flex-direction: column;
             align-items: center;
             padding: 0 1rem;
+            margin-bottom: 1.5rem;
+            width: calc(50% - 2rem);
         }
         
         .detail-label {
@@ -206,6 +208,14 @@
         .detail-value {
             font-size: 1.4rem;
             font-weight: 300;
+        }
+        
+        .weather-description {
+            font-size: 1.4rem;
+            font-weight: 300;
+            margin-top: 0.5rem;
+            text-align: center;
+            text-transform: capitalize;
         }
         
         /* Weather animations */
@@ -318,104 +328,11 @@
             }
         }
         
-        .forecast {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
+        .last-updated {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: right;
             margin-top: auto;
-        }
-        
-        .forecast-day {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.8rem;
-            flex: 1;
-            border-radius: 12px;
-            transition: background-color 0.3s;
-        }
-        
-        .forecast-day:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .forecast-date {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.8rem;
-        }
-        
-        .forecast-temp {
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-top: 0.8rem;
-        }
-        
-        .mini-icon {
-            width: 40px;
-            height: 40px;
-            position: relative;
-        }
-        
-        .mini-sun {
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            background: #ffcf40;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #ffcf40;
-            top: 8px;
-            left: 8px;
-        }
-        
-        .mini-cloud {
-            position: absolute;
-            background: #f2f9fe;
-            border-radius: 50%;
-            animation: float 4s infinite ease-in-out;
-        }
-        
-        .mini-cloud.small {
-            width: 15px;
-            height: 15px;
-        }
-        
-        .mini-cloud.medium {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .mini-cloud.large {
-            width: 25px;
-            height: 25px;
-        }
-        
-        .mini-rain {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            top: 10px;
-            left: 5px;
-        }
-        
-        .mini-raindrop {
-            position: absolute;
-            width: 1px;
-            height: 5px;
-            background: #a4d8f9;
-            border-radius: 5px;
-            animation: mini-rain 1.5s infinite linear;
-        }
-        
-        @keyframes mini-rain {
-            0% {
-                transform: translateY(0) scaleY(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(15px) scaleY(0.5);
-                opacity: 0;
-            }
         }
         
         /* Media queries for tablet landscape */
@@ -448,10 +365,6 @@
             .temperature {
                 font-size: 3.5rem;
             }
-            
-            .forecast-day {
-                padding: 0.5rem;
-            }
         }
         
         @media (max-height: 600px) {
@@ -463,13 +376,8 @@
                 margin-bottom: 1rem;
             }
             
-            .forecast {
-                margin-top: 1rem;
-            }
-            
             .weather-details {
                 margin-top: 1rem;
-                margin-bottom: 1rem;
             }
         }
     </style>
@@ -494,56 +402,37 @@
         
         <div class="right-panel">
             <div class="weather-container">
-                <div class="location">San Francisco, CA</div>
+                <div class="location" id="location">Loading location...</div>
                 
                 <div class="weather-display">
-                    <div class="temperature">68°F</div>
+                    <div class="temperature" id="temperature">--°</div>
                     <div class="weather-icon" id="weather-icon">
                         <!-- Dynamic weather icon will be placed here -->
                     </div>
                 </div>
                 
-                <div class="weather-details">
+                <div class="weather-description" id="weather-description">Loading weather data...</div>
+                
+                <div class="weather-details" id="weather-details">
                     <div class="detail">
                         <span class="detail-label">HUMIDITY</span>
-                        <span class="detail-value">72%</span>
+                        <span class="detail-value" id="humidity">--%</span>
                     </div>
                     <div class="detail">
                         <span class="detail-label">WIND</span>
-                        <span class="detail-value">8 mph</span>
+                        <span class="detail-value" id="wind">-- m/s</span>
                     </div>
                     <div class="detail">
                         <span class="detail-label">FEELS LIKE</span>
-                        <span class="detail-value">70°F</span>
+                        <span class="detail-value" id="feels-like">--°</span>
                     </div>
                     <div class="detail">
-                        <span class="detail-label">UV INDEX</span>
-                        <span class="detail-value">5</span>
+                        <span class="detail-label">PRESSURE</span>
+                        <span class="detail-value" id="pressure">-- hPa</span>
                     </div>
                 </div>
                 
-                <div class="forecast">
-                    <div class="forecast-day">
-                        <span class="forecast-date">THU</span>
-                        <div class="mini-icon" id="forecast-icon-1"></div>
-                        <span class="forecast-temp">72°F</span>
-                    </div>
-                    <div class="forecast-day">
-                        <span class="forecast-date">FRI</span>
-                        <div class="mini-icon" id="forecast-icon-2"></div>
-                        <span class="forecast-temp">75°F</span>
-                    </div>
-                    <div class="forecast-day">
-                        <span class="forecast-date">SAT</span>
-                        <div class="mini-icon" id="forecast-icon-3"></div>
-                        <span class="forecast-temp">69°F</span>
-                    </div>
-                    <div class="forecast-day">
-                        <span class="forecast-date">SUN</span>
-                        <div class="mini-icon" id="forecast-icon-4"></div>
-                        <span class="forecast-temp">65°F</span>
-                    </div>
-                </div>
+                <div class="last-updated" id="last-updated">Last updated: --</div>
             </div>
         </div>
     </div>
@@ -595,167 +484,312 @@
         }
         
         // Create weather icons
-        function createWeatherIcons() {
-            // Create sunny icon
-            const sunnyIcon = (isSmall = false) => {
-                const icon = document.createElement('div');
-                const sun = document.createElement('div');
-                
-                if (isSmall) {
-                    sun.className = 'mini-sun';
-                    // Create sun rays for mini icon
-                    for (let i = 0; i < 8; i++) {
-                        const ray = document.createElement('div');
-                        ray.className = 'sun-ray';
-                        ray.style.width = '2px';
-                        ray.style.height = '8px';
-                        ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
-                        sun.appendChild(ray);
-                    }
+        function createWeatherIcon(weatherCode) {
+            const icon = document.createElement('div');
+            
+            // Clear the previous icon
+            const weatherIconContainer = document.getElementById('weather-icon');
+            weatherIconContainer.innerHTML = '';
+            
+            // Set icon based on weather condition
+            // Weather codes: https://openweathermap.org/weather-conditions
+            if (weatherCode >= 200 && weatherCode < 300) {
+                // Thunderstorm
+                createThunderstormIcon(icon);
+            } else if (weatherCode >= 300 && weatherCode < 400) {
+                // Drizzle
+                createRainyIcon(icon, true);
+            } else if (weatherCode >= 500 && weatherCode < 600) {
+                // Rain
+                createRainyIcon(icon);
+            } else if (weatherCode >= 600 && weatherCode < 700) {
+                // Snow
+                createSnowyIcon(icon);
+            } else if (weatherCode >= 700 && weatherCode < 800) {
+                // Atmosphere (mist, fog, etc.)
+                createMistyIcon(icon);
+            } else if (weatherCode === 800) {
+                // Clear sky
+                createSunnyIcon(icon);
+            } else if (weatherCode > 800 && weatherCode < 900) {
+                // Clouds
+                if (weatherCode === 801) {
+                    // Few clouds
+                    createPartlyCloudyIcon(icon);
                 } else {
-                    sun.className = 'sun';
-                    // Create sun rays
-                    for (let i = 0; i < 8; i++) {
-                        const ray = document.createElement('div');
-                        ray.className = 'sun-ray';
-                        ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
-                        sun.appendChild(ray);
+                    // More clouds
+                    createCloudyIcon(icon);
+                }
+            }
+            
+            weatherIconContainer.appendChild(icon);
+        }
+        
+        // Sunny icon creation
+        function createSunnyIcon(container) {
+            const sun = document.createElement('div');
+            sun.className = 'sun';
+            
+            // Create sun rays
+            for (let i = 0; i < 8; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'sun-ray';
+                ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
+                sun.appendChild(ray);
+            }
+            
+            container.appendChild(sun);
+        }
+        
+        // Partly cloudy icon creation
+        function createPartlyCloudyIcon(container) {
+            const sun = document.createElement('div');
+            sun.className = 'sun';
+            sun.style.left = '15px';
+            sun.style.top = '10px';
+            
+            // Create sun rays
+            for (let i = 0; i < 8; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'sun-ray';
+                ray.style.transform = `translate(-50%, 0) rotate(${i * 45}deg)`;
+                sun.appendChild(ray);
+            }
+            
+            // Add clouds over the sun
+            const cloud1 = document.createElement('div');
+            cloud1.className = 'cloud medium';
+            cloud1.style.left = '55px';
+            cloud1.style.top = '30px';
+            cloud1.style.opacity = '0.9';
+            container.appendChild(cloud1);
+            
+            const cloud2 = document.createElement('div');
+            cloud2.className = 'cloud large';
+            cloud2.style.left = '35px';
+            cloud2.style.top = '50px';
+            container.appendChild(cloud2);
+            
+            container.appendChild(sun);
+        }
+        
+        // Cloudy icon creation
+        function createCloudyIcon(container) {
+            const cloud1 = document.createElement('div');
+            cloud1.className = 'cloud large';
+            cloud1.style.left = '25px';
+            cloud1.style.top = '25px';
+            container.appendChild(cloud1);
+            
+            const cloud2 = document.createElement('div');
+            cloud2.className = 'cloud medium';
+            cloud2.style.left = '55px';
+            cloud2.style.top = '20px';
+            container.appendChild(cloud2);
+            
+            const cloud3 = document.createElement('div');
+            cloud3.className = 'cloud small';
+            cloud3.style.left = '15px';
+            cloud3.style.top = '40px';
+            container.appendChild(cloud3);
+        }
+        
+        // Rainy icon creation
+        function createRainyIcon(container, isDrizzle = false) {
+            // Create cloud base
+            const cloud1 = document.createElement('div');
+            cloud1.className = 'cloud large';
+            cloud1.style.left = '25px';
+            cloud1.style.top = '15px';
+            container.appendChild(cloud1);
+            
+            const cloud2 = document.createElement('div');
+            cloud2.className = 'cloud medium';
+            cloud2.style.left = '45px';
+            cloud2.style.top = '10px';
+            container.appendChild(cloud2);
+            
+            // Create rain container
+            const rain = document.createElement('div');
+            rain.className = 'rain';
+            
+            // Add raindrops
+            const dropCount = isDrizzle ? 8 : 12;
+            for (let i = 0; i < dropCount; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'raindrop';
+                drop.style.left = `${Math.random() * 60}px`;
+                drop.style.animationDelay = `${Math.random() * 1.5}s`;
+                if (isDrizzle) {
+                    drop.style.height = '5px';
+                    drop.style.opacity = '0.8';
+                }
+                rain.appendChild(drop);
+            }
+            
+            container.appendChild(rain);
+        }
+        
+        // Snowy icon creation
+        function createSnowyIcon(container) {
+            // Create cloud base
+            const cloud1 = document.createElement('div');
+            cloud1.className = 'cloud large';
+            cloud1.style.left = '25px';
+            cloud1.style.top = '15px';
+            container.appendChild(cloud1);
+            
+            const cloud2 = document.createElement('div');
+            cloud2.className = 'cloud medium';
+            cloud2.style.left = '45px';
+            cloud2.style.top = '10px';
+            container.appendChild(cloud2);
+            
+            // Create snow container
+            const snow = document.createElement('div');
+            snow.className = 'snow';
+            
+            // Add snowflakes
+            for (let i = 0; i < 10; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.style.left = `${Math.random() * 60}px`;
+                flake.style.animationDelay = `${Math.random() * 3}s`;
+                snow.appendChild(flake);
+            }
+            
+            container.appendChild(snow);
+        }
+        
+        // Thunderstorm icon creation
+        function createThunderstormIcon(container) {
+            // Create cloud base
+            const cloud1 = document.createElement('div');
+            cloud1.className = 'cloud large';
+            cloud1.style.left = '25px';
+            cloud1.style.top = '15px';
+            cloud1.style.background = '#bbb';
+            container.appendChild(cloud1);
+            
+            const cloud2 = document.createElement('div');
+            cloud2.className = 'cloud medium';
+            cloud2.style.left = '45px';
+            cloud2.style.top = '10px';
+            cloud2.style.background = '#aaa';
+            container.appendChild(cloud2);
+            
+            // Create lightning bolt
+            const bolt = document.createElement('div');
+            bolt.style.position = 'absolute';
+            bolt.style.left = '45px';
+            bolt.style.top = '40px';
+            bolt.style.width = '0';
+            bolt.style.height = '0';
+            bolt.style.borderLeft = '6px solid transparent';
+            bolt.style.borderRight = '6px solid transparent';
+            bolt.style.borderTop = '40px solid #ffff00';
+            bolt.style.transformOrigin = 'center';
+            bolt.style.transform = 'rotate(20deg)';
+            bolt.style.zIndex = '5';
+            bolt.style.animation = 'flash 2s infinite';
+            container.appendChild(bolt);
+            
+            // Add animation for lightning
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes flash {
+                    0%, 90%, 100% {
+                        opacity: 0;
+                    }
+                    95% {
+                        opacity: 1;
                     }
                 }
-                
-                icon.appendChild(sun);
-                return icon;
-            };
+            `;
+            document.head.appendChild(style);
             
-            // Create partly cloudy icon
-            const partlyCloudyIcon = (isSmall = false) => {
-                const icon = document.createElement('div');
-                const sun = document.createElement('div');
+            // Add some rain drops too
+            const rain = document.createElement('div');
+            rain.className = 'rain';
+            
+            for (let i = 0; i < 8; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'raindrop';
+                drop.style.left = `${Math.random() * 60}px`;
+                drop.style.animationDelay = `${Math.random() * 1.5}s`;
+                rain.appendChild(drop);
+            }
+            
+            container.appendChild(rain);
+        }
+        
+        // Misty/foggy icon creation
+        function createMistyIcon(container) {
+            // Create fog lines
+            for (let i = 0; i < 5; i++) {
+                const fogLine = document.createElement('div');
+                fogLine.style.position = 'absolute';
+                fogLine.style.left = '20px';
+                fogLine.style.top = `${20 + i * 12}px`;
+                fogLine.style.width = `${40 + (i % 3) * 10}px`;
+                fogLine.style.height = '6px';
+                fogLine.style.background = 'rgba(200, 200, 200, 0.8)';
+                fogLine.style.borderRadius = '3px';
+                fogLine.style.animation = `float ${2 + i * 0.2}s infinite ease-in-out`;
+                fogLine.style.animationDelay = `${i * 0.3}s`;
+                container.appendChild(fogLine);
+            }
+        }
+        
+        // Function to fetch weather data from the API
+        async function fetchWeatherData() {
+            try {
+                // Update the last updated time first
+                const now = new Date();
+                document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleTimeString()}`;
                 
-                if (isSmall) {
-                    sun.className = 'mini-sun';
-                    sun.style.width = '20px';
-                    sun.style.height = '20px';
-                    sun.style.left = '0px';
-                    sun.style.top = '0px';
-                    
-                    // Add clouds over the sun for mini icon
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'mini-cloud medium';
-                    cloud1.style.left = '15px';
-                    cloud1.style.top = '15px';
-                    cloud1.style.opacity = '0.9';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'mini-cloud large';
-                    cloud2.style.left = '8px';
-                    cloud2.style.top = '20px';
-                    icon.appendChild(cloud2);
-                } else {
-                    sun.className = 'sun';
-                    sun.style.left = '15px';
-                    sun.style.top = '10px';
-                    
-                    // Add clouds over the sun
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'cloud medium';
-                    cloud1.style.left = '55px';
-                    cloud1.style.top = '30px';
-                    cloud1.style.opacity = '0.9';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'cloud large';
-                    cloud2.style.left = '35px';
-                    cloud2.style.top = '50px';
-                    icon.appendChild(cloud2);
+                // Fetch API data - replace with your actual API call
+                const response = await fetch('https://weather-api167.p.rapidapi.com/api/weather/current?place=Baghdad%2CIQ&units=metric&lang=en&mode=json', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'x-rapidapi-host': 'weather-api167.p.rapidapi.com',
+                        'x-rapidapi-key': '6aaed8f0c6msh1591ececd4f781fp10299bjsnefadbb6c8557'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Weather API request failed');
                 }
                 
-                icon.appendChild(sun);
-                return icon;
-            };
-            
-            // Create rainy icon
-            const rainyIcon = (isSmall = false) => {
-                const icon = document.createElement('div');
+                const data = await response.json();
+                console.log('Weather data:', data);
                 
-                if (isSmall) {
-                    // Create cloud base for mini icon
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'mini-cloud large';
-                    cloud1.style.left = '8px';
-                    cloud1.style.top = '0px';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'mini-cloud medium';
-                    cloud2.style.left = '15px';
-                    cloud2.style.top = '-3px';
-                    icon.appendChild(cloud2);
-                    
-                    // Create rain container for mini icon
-                    const rain = document.createElement('div');
-                    rain.className = 'mini-rain';
-                    
-                    // Add raindrops
-                    for (let i = 0; i < 8; i++) {
-                        const drop = document.createElement('div');
-                        drop.className = 'mini-raindrop';
-                        drop.style.left = `${Math.random() * 30}px`;
-                        drop.style.animationDelay = `${Math.random() * 1.5}s`;
-                        rain.appendChild(drop);
-                    }
-                    
-                    icon.appendChild(rain);
-                } else {
-                    // Create cloud base
-                    const cloud1 = document.createElement('div');
-                    cloud1.className = 'cloud large';
-                    cloud1.style.left = '25px';
-                    cloud1.style.top = '15px';
-                    icon.appendChild(cloud1);
-                    
-                    const cloud2 = document.createElement('div');
-                    cloud2.className = 'cloud medium';
-                    cloud2.style.left = '45px';
-                    cloud2.style.top = '10px';
-                    icon.appendChild(cloud2);
-                    
-                    // Create rain container
-                    const rain = document.createElement('div');
-                    rain.className = 'rain';
-                    
-                    // Add raindrops
-                    for (let i = 0; i < 12; i++) {
-                        const drop = document.createElement('div');
-                        drop.className = 'raindrop';
-                        drop.style.left = `${Math.random() * 60}px`;
-                        drop.style.animationDelay = `${Math.random() * 1.5}s`;
-                        rain.appendChild(drop);
-                    }
-                    
-                    icon.appendChild(rain);
-                }
+                // Update UI with weather data
+                document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
+                document.getElementById('temperature').textContent = `${Math.round(data.main.temprature)}°${data.main.temprature_unit}`;
+                document.getElementById('weather-description').textContent = data.weather[0].description;
+                document.getElementById('humidity').textContent = `${data.main.humidity}${data.main.humidity_unit}`;
+                document.getElementById('wind').textContent = `${data.wind.speed} ${data.wind.speed_unit}`;
+                document.getElementById('feels-like').textContent = `${Math.round(data.main.temprature_feels_like)}°${data.main.temprature_unit}`;
+                document.getElementById('pressure').textContent = `${data.main.pressure} ${data.main.pressure_unit}`;
                 
-                return icon;
-            };
-            
-            // Set main weather icon
-            const mainWeatherIcon = document.getElementById('weather-icon');
-            mainWeatherIcon.appendChild(partlyCloudyIcon());
-            
-            // Set forecast icons
-            document.getElementById('forecast-icon-1').appendChild(sunnyIcon(true));
-            document.getElementById('forecast-icon-2').appendChild(sunnyIcon(true));
-            document.getElementById('forecast-icon-3').appendChild(rainyIcon(true));
-            document.getElementById('forecast-icon-4').appendChild(partlyCloudyIcon(true));
+                // Create weather icon based on weather condition code
+                createWeatherIcon(data.weather[0].id);
+                
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('weather-description').textContent = 'Failed to load weather data';
+            }
         }
         
         // Initialize the app
         window.onload = function() {
             updateClock();
-            createWeatherIcons();
+            
+            // Fetch weather data immediately and then every hour
+            fetchWeatherData();
+            setInterval(fetchWeatherData, 3600000); // 3600000 ms = 1 hour
         };
     </script>
 </body>
